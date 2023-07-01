@@ -9,8 +9,6 @@ class MyBot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = self.load_config()
-        self.last_message_id = self.config.get('last_message_id')
-        self.last_message = None
 
     async def on_ready(self):
         print(f'We have logged in as {self.user}')
@@ -51,24 +49,24 @@ class MyBot(discord.Client):
         embed.add_field(name="Online Players", value=player_list)
         embed.set_footer(text="grogl.zapto.org:25566")
 
-        if self.last_message_id:
+        message_id = self.config['last_message_id']
+        if message_id:
             try:
-                self.last_message = await channel.fetch_message(self.last_message_id)
-                await self.last_message.edit(embed=embed)
+                message = await channel.fetch_message(message_id)
+                await message.edit(embed=embed)
             except discord.NotFound:
-                self.last_message = await channel.send(embed=embed)
+                message = await channel.send(embed=embed)
+                self.config['last_message_id'] = message.id
         else:
-            self.last_message = await channel.send(embed=embed)
+            message = await channel.send(embed=embed)
+            self.config['last_message_id'] = message.id
 
-        self.config['last_message_id'] = self.last_message.id
         self.save_config()
         
-        await asyncio.sleep(7)
+    async def on_message(self, message):
+        # Implement any additional logic you need for processing messages
+        pass
 
 # Create an instance of the bot
 intents = discord.Intents.default()
 intents.message_content = True
-client = MyBot(intents=intents)
-
-# Run the bot
-client.run(client.config['token'])  # replace with your bot token
