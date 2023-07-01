@@ -1,7 +1,12 @@
 import discord
+import mcstatus
+import json
 from discord.ext import tasks
 from mcstatus import JavaServer
 import asyncio
+
+with open('config.json') as config_file:
+    config = json.load(config_file)
 
 class MyBot(discord.Client):
     def __init__(self, *args, **kwargs):
@@ -13,8 +18,8 @@ class MyBot(discord.Client):
 
     @tasks.loop(seconds=7)  # adjust the time interval as needed
     async def mc_status_update(self):
-        channel = self.get_channel(1121442282353213560)  # replace with your channel ID
-        server = JavaServer.lookup("grogl.zapto.org:25566")  # replace with your server IP and port
+        channel = self.get_channel(config['channelID'])  # replace with your channel ID
+        server = JavaServer.lookup(config['serverIP']+':'+config['serverPort'])  # replace with your server IP and port
         status = server.status()
 
         player_list = ', '.join([player.name for player in status.players.sample]) if status.players.sample else 'No players online'
@@ -45,4 +50,4 @@ intents.message_content = True
 client = MyBot(intents=intents)
 
 # Run the bot
-client.run('MTEyMTQxOTE0NzczODM1NzgwMQ.GLEMNm.UquzV0K9qClqRFFMSQmFsAXaQS01oIgyeFhYys')  # replace with your bot token
+client.run(config['token'])  # replace with your bot token
