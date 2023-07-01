@@ -49,12 +49,12 @@ class MyBot(discord.Client):
                 await self.last_message.edit(embed=embed)
             except discord.NotFound:
                 self.last_message = await channel.send(embed=embed)
-                self.config['last_message_id'] = self.last_message.id
-                self.save_config()
         else:
             self.last_message = await channel.send(embed=embed)
-            self.config['last_message_id'] = self.last_message.id
-            self.save_config()
+
+        self.config['last_message_id'] = self.last_message.id
+        self.save_config()
+        
         await asyncio.sleep(7)
 
 # Create an instance of the bot
