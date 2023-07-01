@@ -5,8 +5,13 @@ from discord.ext import tasks
 from mcstatus import JavaServer
 import asyncio
 
-with open('config.json') as config_file:
-    config = json.load(config_file)
+def load_config(self):
+    with open('config.json', 'r') as config_file:
+        return json.load(config_file)
+        
+def save_config(self):
+    with open('config.json', 'w') as config_file:
+        json.dump(self.config, config_file, indent=4)
 
 class MyBot(discord.Client):
     def __init__(self, *args, **kwargs):
@@ -35,13 +40,18 @@ class MyBot(discord.Client):
         embed.add_field(name="Online Players", value=player_list)
         embed.set_footer(text="grogl.zapto.org:25566")
 
-        if self.last_message:
+        if self.last_message_id:
             try:
+                self.last_message = await channel.fetch_message(self.last_message_id)
                 await self.last_message.edit(embed=embed)
             except discord.NotFound:
                 self.last_message = await channel.send(embed=embed)
-        else:
-            self.last_message = await channel.send(embed=embed)
+                self.config['last_message_id'] = self.last_message.id
+                self.save_config()
+            else:
+                self.last_message = await channel.send(embed=embed)
+                self.config['last_message_id'] = self.last_message.id
+                self.save_config()
         await asyncio.sleep(7)
 
 # Create an instance of the bot
