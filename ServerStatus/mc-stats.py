@@ -36,7 +36,7 @@ class MyBot(discord.Client):
         server = JavaServer.lookup(self.config['serverIP']+':'+self.config['serverPort'])  # replace with your server IP and port
         status = server.status()
 
-        player_list = ', '.join([player.name for player in status.players.sample]) if status.players.sample else 'No players online'
+        player_list = '\n'.join([player.name for player in status.players.sample]) if status.players.sample else 'No players online'
 
         embed = discord.Embed(
             title="Minecraft Server Status",
