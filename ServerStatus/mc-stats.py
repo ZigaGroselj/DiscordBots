@@ -5,14 +5,6 @@ from discord.ext import tasks
 from mcstatus import JavaServer
 import asyncio
 
-def load_config(self):
-    with open('config.json', 'r') as config_file:
-        return json.load(config_file)
-        
-def save_config(self):
-    with open('config.json', 'w') as config_file:
-        json.dump(self.config, config_file, indent=4)
-
 class MyBot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,6 +12,14 @@ class MyBot(discord.Client):
     async def on_ready(self):
         print(f'We have logged in as {self.user}')
         self.mc_status_update.start()  # start the task here
+        
+    def load_config(self):
+        with open('config.json', 'r') as config_file:
+            return json.load(config_file)
+        
+    def save_config(self):
+        with open('config.json', 'w') as config_file:
+            json.dump(self.config, config_file, indent=4)
 
     @tasks.loop(seconds=7)  # adjust the time interval as needed
     async def mc_status_update(self):
