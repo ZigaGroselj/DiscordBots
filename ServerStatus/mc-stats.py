@@ -70,3 +70,10 @@ class MyBot(discord.Client):
 # Create an instance of the bot
 intents = discord.Intents.default()
 intents.message_content = True
+client = MyBot(intents=intents)
+
+# Run the bot
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+    client.run(config['token'])  # replace with your bot token
+
