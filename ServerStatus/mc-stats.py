@@ -18,7 +18,7 @@ class MyBot(discord.Client):
 
     @tasks.loop(seconds=7)  # adjust the time interval as needed
     async def mc_status_update(self):
-        channel = await self.get_channel(config['channelID'])  # replace with your channel ID
+        channel = await self.get_channel(int(config['channelID']))  # replace with your channel ID
         server = JavaServer.lookup(config['serverIP']+':'+config['serverPort'])  # replace with your server IP and port
         status = server.status()
 
