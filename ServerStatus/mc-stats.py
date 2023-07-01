@@ -8,23 +8,26 @@ import asyncio
 class MyBot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = self.load_config()
+        self.last_message_id = self.config.get('last_message_id')
         self.last_message = None
+
     async def on_ready(self):
         print(f'We have logged in as {self.user}')
         self.mc_status_update.start()  # start the task here
-        
+
     def load_config(self):
         with open('config.json', 'r') as config_file:
             return json.load(config_file)
-        
+
     def save_config(self):
         with open('config.json', 'w') as config_file:
             json.dump(self.config, config_file, indent=4)
 
     @tasks.loop(seconds=7)  # adjust the time interval as needed
     async def mc_status_update(self):
-        channel = self.get_channel(int(config['channelID']))  # replace with your channel ID
-        server = JavaServer.lookup(config['serverIP']+':'+config['serverPort'])  # replace with your server IP and port
+        channel = self.get_channel(int(self.config['channelID']))  # replace with your channel ID
+        server = JavaServer.lookup(self.config['serverIP']+':'+self.config['serverPort'])  # replace with your server IP and port
         status = server.status()
 
         player_list = ', '.join([player.name for player in status.players.sample]) if status.players.sample else 'No players online'
@@ -48,10 +51,10 @@ class MyBot(discord.Client):
                 self.last_message = await channel.send(embed=embed)
                 self.config['last_message_id'] = self.last_message.id
                 self.save_config()
-            else:
-                self.last_message = await channel.send(embed=embed)
-                self.config['last_message_id'] = self.last_message.id
-                self.save_config()
+        else:
+            self.last_message = await channel.send(embed=embed)
+            self.config['last_message_id'] = self.last_message.id
+            self.save_config()
         await asyncio.sleep(7)
 
 # Create an instance of the bot
@@ -60,4 +63,4 @@ intents.message_content = True
 client = MyBot(intents=intents)
 
 # Run the bot
-client.run(config['token'])  # replace with your bot token
+client.run(client.config['token'])  # replace with your bot token
