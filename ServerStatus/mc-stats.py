@@ -14,6 +14,14 @@ class MyBot(discord.Client):
 
     async def on_ready(self):
         print(f'We have logged in as {self.user}')
+        self.config = self.load_config()
+        
+        if 'last_message_id' not in self.config:
+            channel = self.get_channel(int(self.config['channelID']))  # replace with your channel ID
+            message = await channel.send('Loading...')
+            self.config['last_message_id'] = message.id
+            self.save_config()
+        
         self.mc_status_update.start()  # start the task here
 
     def load_config(self):
