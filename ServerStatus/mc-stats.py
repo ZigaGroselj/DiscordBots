@@ -44,7 +44,7 @@ class MyBot(discord.Client):
             color=discord.Color.green()
         )
         embed.add_field(name="Players Online",value=f"{status.players.online}/{status.players.max}")
-        embed.add_field(name="Latency",value=f"{status.latency:.2f}ms")
+        embed.add_field(name="Latency",value=f"{status.latency:.0f}ms")
         embed.add_field(name="Version",value=status.version.name,inline="true")
         embed.add_field(name="Online Players", value=player_list)
         embed.set_footer(text="grogl.zapto.org:25566")
