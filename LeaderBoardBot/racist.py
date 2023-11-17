@@ -2,6 +2,10 @@ import discord
 from discord.ext import commands
 import json
 
+intents = discord.Intents.default()
+intents.messages = True
+intents.guilds = True
+
 # Bot setup
 bot = commands.Bot(command_prefix="n!")
 
@@ -16,7 +20,7 @@ def load_config():
         # Convert tracked words to lowercase
         config_data["tracked_words"] = [word.lower() for word in config_data["tracked_words"]]
     except FileNotFoundError:
-        config_data = {"tracked_words": [], "word_counts": {}}
+        config_data = {"bot_token": "", "tracked_words": [], "word_counts": {}}
 
 def save_config():
     with open('config.json', 'w') as file:
@@ -64,4 +68,8 @@ async def display_leaderboard(ctx, word):
     await ctx.send(leaderboard_text)
 
 # Run the bot
-bot.run('YOUR_BOT_TOKEN')  # Replace with your bot token
+bot_token = config_data.get("bot_token")
+if bot_token:
+    bot.run(bot_token)
+else:
+    print("Bot token not found in config.json. Please add it and try again.")
