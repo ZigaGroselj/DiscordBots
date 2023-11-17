@@ -8,7 +8,7 @@ intents.guilds = True
 
 # Bot setup with intents
 bot = commands.Bot(command_prefix="n!", intents=intents)
-
+bot.remove_command('help')
 
 # Configuration data
 config_data = {}
@@ -29,6 +29,19 @@ def save_config():
 
 # Load the configuration on startup
 load_config()
+
+@bot.group(invoke_without_command=True)
+async def help(ctx):
+    em = discord.Embed(title = "Help", description = "Use n!help <command> for extended information on a command.", color = ctx.author.color)
+    em.add_field(name = "Leaderboard", value = "Displays the word count leaderboard for the specified word.", inline = False)
+    
+    await ctx.send(embed = em)
+    
+@help.command()
+async def leaderboard(ctx):
+    em = discord.Embed(title = "Leaderboard", description = "Displays the word count leaderboard for the specified word.", color = ctx.author.color)
+    em.add_field(name = "**Syntax**", value = "n!leaderboard <word>", inline = False)
+    await ctx.send(embed = em)
 
 # Event for handling messages
 @bot.event
