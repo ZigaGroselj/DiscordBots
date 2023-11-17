@@ -6,8 +6,9 @@ intents = discord.Intents.default()
 intents.messages = True
 intents.guilds = True
 
-# Bot setup
-bot = commands.Bot(command_prefix="n!")
+# Bot setup with intents
+bot = commands.Bot(command_prefix="n!", intents=intents)
+
 
 # Configuration data
 config_data = {}
